@@ -22,7 +22,7 @@ public class Dedale
 	private long debutNiveau;
 	private long finNiveau;
 	private long debutTotal;
-	private long finTotal;
+	// private long finTotal;
 
 	private FetchApi api;
 
@@ -71,7 +71,13 @@ public class Dedale
 	public int    getNiveau()        { if (this.niveau == 0) return 1; else return this.niveau;}
 	
 	public void   setNom(String nom) {        this.nom    = nom;     }
-	public void   setNiveau(int niv) {        this.niveau = niv;  }
+	public void   setTempsNiveau()   { this.debutNiveau = System.nanoTime(); }
+	public void   setNiveau(int niv) 
+	{
+		this.niveau = niv; 
+		if(this.niveau != 0) this.tabPiece = this.initPiece(this.getNiveau()); 
+	}
+	
 	
 	public String getTempsTotal()
 	{
@@ -309,7 +315,7 @@ public class Dedale
 
 		int levelMax;
 
-		levelMax = this.api.getLevel();
+		levelMax = this.api.getMaxLevel();
 	
 		switch (action)
 		{
@@ -319,7 +325,7 @@ public class Dedale
 					{
 						float tempsFin = this.finNiveau();
 
-						if (this.niveau >= levelMax) {
+						if (this.niveau >= levelMax	 ) {
 
 							this.api.finishLevel(this.getNbDeplacement(), tempsFin, this.getNiveau());
 							
@@ -357,25 +363,75 @@ public class Dedale
 		
 	}
 
+	public void bougerPieceTouche(char action)
+	{
 
+		int cptLig, cptCol;
+		int nextCptLig, nextCptCol;
+
+		cptLig = this.getPosNull()[0];
+		cptCol = this.getPosNull()[1];
+
+		System.out.println(cptLig+ " " + cptCol);
+
+		nextCptLig = cptLig;
+		nextCptCol = cptCol;
+
+		switch (action) {
+			case 's' -> nextCptLig++;
+			case 'q' -> nextCptCol--;
+			case 'z' -> nextCptLig--;
+			case 'd' -> nextCptCol++;
+		}
+
+		System.out.println(nextCptLig + " " + nextCptCol);
+
+		this.deplacerPiece(nextCptLig, nextCptCol, cptLig, cptCol);
+	}
+
+
+	public int[] getPosNull()
+	{
+
+		int[] posNull;
+
+		posNull = new int[2];
+
+		for (int cptLig = 0; cptLig < 5; cptLig++)
+			for (int cptCol = 0; cptCol < 5; cptCol++)
+			{
+
+				if (this.getPiece(cptLig, cptCol) == null)
+				{
+
+					posNull[0] = cptLig;
+					posNull[1] = cptCol;
+
+				}
+
+			}
+
+		return posNull;
+
+	}
 
 	public float finNiveau()
 	{
 		this.finNiveau = System.nanoTime();
 		long dureeNiveau = this.finNiveau - this.debutNiveau;
-		System.out.println("Durée du niveau " + this.niveau + " : " + dureeNiveau / 1_000_000_000.0 + " secondes");
+		// System.out.println("Durée du niveau " + this.niveau + " : " + dureeNiveau / 1_000_000_000.0 + " secondes");
 
 		// Réinitialisez le timer pour le prochain niveau
 		this.debutNiveau = System.nanoTime();
 		return (float) (dureeNiveau / 1_000_000_000.0);
 	}
 
-	public void finTotal()
-	{
-		this.finTotal = System.nanoTime();
-		long dureeTotal = this.finTotal - this.debutTotal;
-		System.out.println("Durée totale " + this.niveau + " :  " + dureeTotal / 1_000_000_000.0 + " secondes");
-	}
+	// public void finTotal()
+	// {
+	// 	this.finTotal = System.nanoTime();
+	// 	long dureeTotal = this.finTotal - this.debutTotal;
+	// 	// System.out.println("Durée totale " + this.niveau + " :  " + dureeTotal / 1_000_000_000.0 + " secondes");
+	// }
 
 
 

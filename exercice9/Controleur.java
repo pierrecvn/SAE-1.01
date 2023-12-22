@@ -95,7 +95,15 @@ public class Controleur extends Controle
 
 		frame.majIHM();
 	}
-	
+	Exercice10.tar
+├── Controleur.java
+├── Conversion.java
+├── Dedale.java
+├── images
+│   ....
+│   └── P15.png
+├── Piece.java
+└── Position.java
 	public void glisser (int ligne1, int colonne1, int ligne2, int colonne2)
 	{
 		if (ligne1 != ligne2 || colonne1 != colonne2)

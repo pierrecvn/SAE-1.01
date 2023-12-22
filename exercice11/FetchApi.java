@@ -217,6 +217,99 @@ public class FetchApi
 
 	}
 
+	public int getMaxLevel()
+	{
+
+		String resultat = "";
+
+		try {
+
+			String urlStr ="https://api.e-carsadventure.fr/get_max_level.php?apikey="
+							+ URLEncoder.encode(this.APIKEY, StandardCharsets.UTF_8) 
+							+ "&uid="
+							+ URLEncoder.encode(Uuid.getUuid(), StandardCharsets.UTF_8);
+
+			URL url = new URL(urlStr);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+			conn.setRequestMethod("GET");
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String inputLine;
+			StringBuilder content = new StringBuilder();
+			while ((inputLine = in.readLine()) != null)
+			{
+				content.append(inputLine);
+			}
+
+			in.close();
+			conn.disconnect();
+
+			resultat = content.toString();
+
+			Decomposeur decomposeur = new Decomposeur(resultat);
+
+			boolean erreur = (decomposeur.getString(0) == "true") ? true : false;
+
+			if (erreur) System.out.println(decomposeur.getString(1));
+
+			return decomposeur.getInt(1);
+
+		} catch (Exception e)
+		{
+			e.getStackTrace();
+		}
+
+		return 0;
+
+	}
+
+	public boolean resetAllLevel()
+	{
+		String resultat = "";
+
+		try {
+
+			String urlStr ="https://api.e-carsadventure.fr/delete_data.php?apikey="
+							+ URLEncoder.encode(this.APIKEY, StandardCharsets.UTF_8) 
+							+ "&uid="
+							+ URLEncoder.encode(Uuid.getUuid(), StandardCharsets.UTF_8);
+
+			URL url = new URL(urlStr);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+			conn.setRequestMethod("GET");
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			String inputLine;
+			StringBuilder content = new StringBuilder();
+			while ((inputLine = in.readLine()) != null)
+			{
+				content.append(inputLine);
+			}
+
+			in.close();
+			conn.disconnect();
+
+			resultat = content.toString();
+
+			Decomposeur decomposeur = new Decomposeur(resultat);
+
+			boolean erreur = (decomposeur.getString(0) == "true") ? true : false;
+
+			if (erreur) System.out.println(decomposeur.getString(1));
+
+			return erreur;
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+
+		}
+
+		return false;
+	}
+
 	public String[][] getLeaderBoard(int niveau)
 	{
 

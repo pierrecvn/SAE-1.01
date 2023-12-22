@@ -57,7 +57,7 @@ public class Controleur extends Controle
 
 	public String setImage(int ligne, int colonne, int couche)
 	{
-		String rep = "./images/";
+		String rep = "images/";
 		String sImage = null;
 		Piece piece = metier.getPiece(ligne, colonne);
 
@@ -106,11 +106,19 @@ public class Controleur extends Controle
 	// Méthode déclenchée par les touches dans l'IHM
 	public void jouer(String touche)
 	{
-		if (touche.equals("FL-H"))    metier.deplacer('N');
-		if (touche.equals("FL-G"))    metier.deplacer('O');
-		if (touche.equals("FL-B"))    metier.deplacer('S');
-		if (touche.equals("FL-D"))    metier.deplacer('E');
-		if (touche.equals("CR-FL-H")) metier.changerNiveau('A');
+		if (touche.equals("FL-H"))    	metier.deplacer('N');
+		if (touche.equals("FL-G"))    	metier.deplacer('O');
+		if (touche.equals("FL-B"))    	metier.deplacer('S');
+		if (touche.equals("FL-D"))    	metier.deplacer('E');
+
+		if (touche.equals("N"))        metier.changerNiveau('A');
+		if (touche.equals("P"))        metier.changerNiveau('B');
+		if (touche.equals("R"))        metier.changerNiveau('C');
+		
+		if (touche.equals("Z"))        metier.bougerPieceTouche('z');
+		if (touche.equals("Q"))        metier.bougerPieceTouche('q');
+		if (touche.equals("S"))        metier.bougerPieceTouche('s');
+		if (touche.equals("D"))        metier.bougerPieceTouche('d');
 
 
 		frame.majIHM();
@@ -170,8 +178,9 @@ public class Controleur extends Controle
 		{
 			case 0  ->  "Niveau précédent";
 			case 1  ->  "Niveau suivant";
-			case 2  ->  "Reset";
-			case 3  ->  "Quitter";
+			case 2  ->  "Rese Nv";
+			case 3  ->  "Supp Données";
+			case 4  ->  "Quitter";
 
 			default ->  null;
 		};
@@ -186,7 +195,19 @@ public class Controleur extends Controle
 	
 		if (action == 2) { metier.changerNiveau('C'); this.updateLeaderboard(); frame.majIHM(); }
 		
-		if (action == 3) { frame.fermer();}
+		if (action == 3) {
+			// Suppression des données
+			 this.api.resetAllLevel(); 
+			 // changer le niveau et actualiser le plateau
+			 metier.setNiveau(1); 
+			 metier.setTempsNiveau();
+
+			 this.updateLeaderboard();
+			 frame.majIHM();
+			
+			}
+
+		if (action == 4) { frame.fermer();}
 	}
 
 	public String initLeaderboard()
@@ -232,7 +253,7 @@ public class Controleur extends Controle
 		}
 
 		if (cpt == 0) sRet += "\n<i>\t\tAucun résultat pour le moment</i>"; else {
-			sRet += "\n<i>Faîtes le meilleur score pour battre  " + ((cpt > 1) ? "les" : "") + String.valueOf(cpt) + " joueur" + ((cpt > 1) ? "s" : "") + "</i>";
+			sRet += "\n<i>Faîtes le meilleur score pour battre  " + ((cpt > 1) ? "les " : "") + String.valueOf(cpt) + " joueur" + ((cpt > 1) ? "s" : "") + "</i>";
 		} 
 
 		sRet += "</pre></html>";
@@ -256,7 +277,6 @@ public class Controleur extends Controle
 		String nom = "";
 		FetchApi api = new FetchApi();
 		Controleur controleur;
-
 		try
 		{
 			if (!Uuid.estPresent())
@@ -271,11 +291,14 @@ public class Controleur extends Controle
 			controleur = new Controleur();
 			controleur.metier.setNom(nom);
 			controleur.metier.setNiveau(api.getLevel());
+
+
+			
 		} catch (Exception e)
 		{
 
 		}
-
 	}
+
 
 }
