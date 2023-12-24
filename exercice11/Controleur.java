@@ -9,6 +9,7 @@ import iut.algo.*;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 
 import javax.swing.JLabel;
 
@@ -28,7 +29,7 @@ public class Controleur extends Controle
 		this.frame  = new FrameGrille(this);
 
 
-		frame.setSize(1920, 1080);
+		frame.setSize(1920, 650);
 		frame.setLocation(10, 10);
 		frame.setTitle("Dédale");
 
@@ -39,9 +40,11 @@ public class Controleur extends Controle
 		rightPanel = new JPanel();
 		rightPanel.setLayout(new BorderLayout());
 		rightPanel.setBorder(new EmptyBorder( 40, 50, 0, 0));
-		rightPanel.setPreferredSize(new Dimension(600, 100));
+		rightPanel.setPreferredSize(new Dimension(900, 100));
+		
 		
 		label = new JLabel("");
+		label.setFont(new Font("Arial", Font.PLAIN, 20));
 		rightPanel.add(label, BorderLayout.NORTH);
 		label.setText(this.initLeaderboard());
 		frame.add(rightPanel, BorderLayout.EAST);
@@ -111,7 +114,7 @@ public class Controleur extends Controle
 		if (touche.equals("FL-B"))    	metier.deplacer('S');
 		if (touche.equals("FL-D"))    	metier.deplacer('E');
 
-		if (touche.equals("N"))        metier.changerNiveau('A');
+		if (touche.equals("O"))        metier.changerNiveau('A');
 		if (touche.equals("P"))        metier.changerNiveau('B');
 		if (touche.equals("R"))        metier.changerNiveau('C');
 		
@@ -138,16 +141,15 @@ public class Controleur extends Controle
 
 	public String setTextLabel(int numLbl)
 	{
-		return switch (numLbl)
-		{
-			case 0  -> String.valueOf(metier.getNom());
-			case 1  -> String.valueOf(metier.getNbDeplacement());
-			case 2  -> String.valueOf(metier.getTempsNiveau());
-			case 3  -> String.valueOf(metier.getTempsTotal());
-			case 4  -> String.valueOf(metier.getNiveau());
-			case 5  -> String.valueOf(metier.getDifficulte());
-
-
+		return switch (numLbl) {
+			case 0 -> String.valueOf(metier.getNom());
+			case 1 -> String.valueOf(metier.getNbDeplacement());
+			case 2 -> String.valueOf(metier.getTempsNiveau());
+			case 3 -> String.valueOf(metier.getTempsTotal());
+			case 4 -> String.valueOf(metier.getDifficulte());
+			case 5 -> {
+				yield String.valueOf(metier.getNiveau()) + " / " + String.valueOf(metier.getNbNiveau());
+			}
 			default -> null;
 		};
 	}
@@ -162,8 +164,8 @@ public class Controleur extends Controle
 ;			case 1  -> "Nb Dep :";
 			case 2  -> "Tps-niv :";
 			case 3  -> "Tps-total :";
-			case 4  -> "Niveau :";
-			case 5  -> "Difficulté:";
+			case 4  -> "Difficulté:";
+			case 5  -> "Niveau :";
 
 
 			default -> null;
@@ -191,7 +193,10 @@ public class Controleur extends Controle
 	{
 		if (action == 0) { metier.changerNiveau('B'); this.updateLeaderboard(); frame.majIHM(); }
 	
-		if (action == 1) { metier.changerNiveau('A'); this.updateLeaderboard(); frame.majIHM(); }
+		if (action == 1) {
+			 metier.changerNiveau('A'); 
+			 if(this.estJeuFini()) return; else this.updateLeaderboard(); 
+			 frame.majIHM(); }
 	
 		if (action == 2) { metier.changerNiveau('C'); this.updateLeaderboard(); frame.majIHM(); }
 		
@@ -208,6 +213,26 @@ public class Controleur extends Controle
 			}
 
 		if (action == 4) { frame.fermer();}
+	}
+
+	public boolean estJeuFini()
+	{
+		if (metier.getNiveau() > metier.getNbNiveau())
+		{
+
+			try
+			{
+				label.setText("Félicitations, vous avez terminé tous les niveaux !");
+				Thread.sleep(3000);
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+
+			frame.fermer();
+			return true;
+		}
+		return false;
 	}
 
 	public String initLeaderboard()
@@ -253,7 +278,7 @@ public class Controleur extends Controle
 		}
 
 		if (cpt == 0) sRet += "\n<i>\t\tAucun résultat pour le moment</i>"; else {
-			sRet += "\n<i>Faîtes le meilleur score pour battre  " + ((cpt > 1) ? "les " : "") + String.valueOf(cpt) + " joueur" + ((cpt > 1) ? "s" : "") + "</i>";
+			sRet += "\n<i>Faîtes le meilleur score pour battre " + ((cpt > 1) ? "les " : "") + String.valueOf(cpt) + " joueur" + ((cpt > 1) ? "s" : "") + "</i>";
 		} 
 
 		sRet += "</pre></html>";
@@ -285,6 +310,8 @@ public class Controleur extends Controle
 				nom = Clavier.lireString();
 				Uuid.setUuid();
 				api.creerJoueur(nom);
+				System.out.println("uuid -> /data/uuid.data  /!\\ ne pas perdre votre UUID :" + Uuid.getUuid());
+
 			}
 			nom = api.getJoueur();
 			System.out.println("Votre nom est   : " + api.getJoueur() +" \nNiveau          : "+ api.getLevel());

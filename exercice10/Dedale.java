@@ -53,6 +53,9 @@ public class Dedale
 	public int getNbDeplacement() { return this.nbDeplacement; }
 
 
+
+
+
 	public Piece getPiece(int lig, int col)
 	{
 		if (lig > this.NbLigne || lig < 0 || col > this.NbColonne || col < 0)

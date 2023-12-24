@@ -11,7 +11,10 @@ public class Uuid {
 		
 	public static void setUuid()
 	{
+		// fait une regex
 		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+
 		String uuid = "";
 		int length = 50;
 
@@ -80,5 +83,10 @@ public class Uuid {
 			e.printStackTrace();
 		}
 		return present;
+	}
+
+	public static void main(String[] args) {
+		Uuid.setUuid();
+		System.out.println(Uuid.getUuid());
 	}
 }

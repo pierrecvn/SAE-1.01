@@ -7,6 +7,7 @@ public class Dedale
 {
 
 	private final static int NB_CASE = 5;
+	private final static int NB_NV = 16;
 
 	private Piece[][] tabPiece;
 	private int NbLigne;
@@ -68,6 +69,7 @@ public class Dedale
 	public int    getNbDeplacement() { return this.nbDeplacement; }
 	public String getDifficulte()    { return this.difficulte;    }
 	public String getNom()           { return this.nom;           }
+	public int    getNbNiveau()      { return this.NB_NV;         }
 	public int    getNiveau()        { if (this.niveau == 0) return 1; else return this.niveau;}
 	
 	public void   setNom(String nom) {        this.nom    = nom;     }
@@ -75,6 +77,10 @@ public class Dedale
 	public void   setNiveau(int niv) 
 	{
 		this.niveau = niv; 
+		if (this.getNom().equals("Pierre")) {
+			this.niveau = 1;
+			
+		}
 		if(this.niveau != 0) this.tabPiece = this.initPiece(this.getNiveau()); 
 	}
 	
@@ -133,15 +139,15 @@ public class Dedale
 			// ------------------------------------------------
 			Scanner sc = new Scanner(new FileInputStream("./niveaux/niveau_"+ String.valueOf( String.format("%02d", niveau) ) +".data"), "UTF8");
 			
-			Decomposeur dec = new Decomposeur(sc.nextLine());
-			this.difficulte = dec.getString(0);
+
+			this.difficulte = sc.nextLine();
 			
 
 			int[][] values = new int[NB_CASE][NB_CASE];
 
 			for (int i = 0; i < NB_CASE; i++)
 			{
-				dec = new Decomposeur(sc.nextLine());
+				Decomposeur dec = new Decomposeur(sc.nextLine());
 				for (int j = 0; j < NB_CASE; j++)
 				{
 					values[i][j] = dec.getInt(j);
@@ -151,39 +157,33 @@ public class Dedale
 
 			// ------------------------------------------------
 
-			int cpt;
+			char indice;
 
 			Piece[][] grillePiece = new Piece[values.length][values[0].length];
 
-			cpt = 0;
+			indice = 'A';
 			for (int cptLig = 0; cptLig < values.length; cptLig++)
 			{
 				for (int cptCol = 0; cptCol < values[cptLig].length; cptCol++)
 				{
 					if (values[cptLig][cptCol] >= 0)
-						grillePiece[cptLig][cptCol] = new Piece(values[cptLig][cptCol], String.valueOf(('A' + cpt)));
-					else
-						grillePiece[cptLig][cptCol] = null;
+					{
+						grillePiece[cptLig][cptCol] = new Piece(values[cptLig][cptCol], String.valueOf((indice)));
 
-					cpt++;
+						if (grillePiece[cptLig][cptCol].getDepart())
+						{
+							this.pieceHeros = grillePiece[cptLig][cptCol];
+							this.dirHeros = 's';
+						}
+					}
+					else
+					{
+						grillePiece[cptLig][cptCol] = null;
+					}
+
+					indice = (char) (indice + 1);
 				}
 			}
-
-
-
-			//positionne le hero sur la piece de depart
-			for (int cptLig = 0; cptLig < values.length; cptLig++)
-			{
-				for (int cptCol = 0; cptCol < values[cptLig].length; cptCol++)
-				{
-					if (grillePiece[cptLig][cptCol] != null && grillePiece[cptLig][cptCol].getDepart())
-					{
-						this.pieceHeros = grillePiece[cptLig][cptCol];
-						this.dirHeros = 's';
-					}
-				}
-			} 
-			
 			
 			return grillePiece;
 
@@ -288,7 +288,7 @@ public class Dedale
 		if (this.tabPiece[ligne2][colonne2] != null) return false;
 
 		// si c'est la sortie
-		if (this.tabPiece[ligne1][colonne1].getArrive()) return false;
+		// if (this.tabPiece[ligne1][colonne1].getArrive()) return false;
 
 		// Vérifie si le déplacement est en diagonale
 		if (ligne1 != ligne2 && colonne1 != colonne2) return false;
@@ -372,7 +372,7 @@ public class Dedale
 		cptLig = this.getPosNull()[0];
 		cptCol = this.getPosNull()[1];
 
-		System.out.println(cptLig+ " " + cptCol);
+		// System.out.println(cptLig+ " " + cptCol);
 
 		nextCptLig = cptLig;
 		nextCptCol = cptCol;
@@ -384,7 +384,7 @@ public class Dedale
 			case 'd' -> nextCptCol++;
 		}
 
-		System.out.println(nextCptLig + " " + nextCptCol);
+		// System.out.println(nextCptLig + " " + nextCptCol);
 
 		this.deplacerPiece(nextCptLig, nextCptCol, cptLig, cptCol);
 	}
@@ -425,14 +425,6 @@ public class Dedale
 		this.debutNiveau = System.nanoTime();
 		return (float) (dureeNiveau / 1_000_000_000.0);
 	}
-
-	// public void finTotal()
-	// {
-	// 	this.finTotal = System.nanoTime();
-	// 	long dureeTotal = this.finTotal - this.debutTotal;
-	// 	// System.out.println("Durée totale " + this.niveau + " :  " + dureeTotal / 1_000_000_000.0 + " secondes");
-	// }
-
 
 
 }

@@ -9,7 +9,7 @@ public class Controleur extends Controle
 	public Controleur()
 	{
 		this.metier = new Dedale();
-		this.frame = new FrameGrille(this);
+		this.frame  = new FrameGrille(this);
 
 		frame.setSize(1200, 600);
 		frame.setLocation(10, 10);

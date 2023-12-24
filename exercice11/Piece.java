@@ -4,7 +4,7 @@ public class Piece
 	private static String[] tabDir = { "Nord", "Ouest", "Sud", "Est" };
 
 	private String nom;
-	private boolean[] ouvertures = new boolean[7];
+	private boolean[] ouvertures = new boolean[6];
 
 	// Constructeur avec une valeur d'ouverture
 	public Piece(int valeur)
